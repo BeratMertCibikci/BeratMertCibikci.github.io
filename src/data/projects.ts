@@ -82,6 +82,7 @@ export const projects: Project[] = [
 			{ value: '0', label: { en: 'destructive actions without approval', fr: 'action destructive sans validation' } },
 		],
 		stack: ['Python', 'Flask', 'Gemini API', 'Ollama', 'Google Calendar API', 'SQLite'],
+		repo: 'https://github.com/BeratMertCibikci/jarvis',
 		visual: 'chat',
 	},
 	{
