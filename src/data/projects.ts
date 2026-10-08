@@ -28,8 +28,8 @@ export const projects: Project[] = [
 			fr: 'Le jeu de société Mr. Jack Pocket, jouable sur ordinateur, avec une IA adverse à quatre niveaux de difficulté.',
 		},
 		role: {
-			en: 'Team project. I wrote the entire AI and contributed to the game engine and interface.',
-			fr: "Projet d'équipe. J'ai écrit toute l'IA et contribué au moteur de jeu et à l'interface.",
+			en: 'Team project, I was the team lead. I wrote the entire AI and contributed to the game model and interface.',
+			fr: "Projet d'équipe, dont j'étais le chef. J'ai écrit toute l'IA et contribué au modèle du jeu et à l'interface.",
 		},
 		built: [
 			{
@@ -47,10 +47,11 @@ export const projects: Project[] = [
 		],
 		metrics: [
 			{ value: '4', label: { en: 'difficulty levels', fr: 'niveaux de difficulté' } },
-			{ value: '~25 ms', label: { en: 'per move at depth 4', fr: 'par coup en profondeur 4' } },
-			{ value: '263', label: { en: 'branches pruned / 826 nodes', fr: 'branches élaguées / 826 nœuds' } },
+			{ value: '19 ms', label: { en: 'median time per move, depth 4', fr: 'temps médian par coup, profondeur 4' } },
+			{ value: '~3,700', label: { en: 'branches cut by α-β per move', fr: 'branches coupées par α-β par coup' } },
 		],
 		stack: ['Java', 'Swing', 'Sockets', 'Git flow'],
+		repo: 'https://github.com/BeratMertCibikci/mr-jack-pocket',
 		visual: 'winrate',
 	},
 	{
