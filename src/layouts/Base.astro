@@ -1,0 +1,44 @@
+---
+import type { Lang } from '../i18n';
+import '../styles/global.css';
+
+interface Props {
+	lang: Lang;
+	title: string;
+	description: string;
+}
+const { lang, title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		<link rel="alternate" hreflang="en" href={new URL('/', Astro.site)} />
+		<link rel="alternate" hreflang="fr" href={new URL('/fr/', Astro.site)} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<!-- Apply the saved theme before the page paints (avoids a white flash) -->
+		<script is:inline>
+			try {
+				const saved = localStorage.getItem('theme');
+				if (saved) document.documentElement.dataset.theme = saved;
+			} catch {}
+		</script>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

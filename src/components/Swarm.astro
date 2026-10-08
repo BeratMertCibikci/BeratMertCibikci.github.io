@@ -1,0 +1,133 @@
+---
+// Live "boids" swarm behind the hero section.
+// Each agent follows 3 local rules (Reynolds, 1987): align with neighbours,
+// move toward their centre, keep a small distance. No agent sees the whole swarm,
+// yet the group moves as one — a small picture of distributed AI.
+---
+
+<canvas id="swarm" aria-hidden="true"></canvas>
+
+<style>
+	#swarm {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+</style>
+
+<script>
+	type Agent = { x: number; y: number; vx: number; vy: number };
+
+	const canvas = document.getElementById('swarm') as HTMLCanvasElement;
+	const ctx = canvas.getContext('2d')!;
+	const area = canvas.parentElement!;
+	const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	let W = 0, H = 0, dpr = 1;
+	const mouse = { x: -1e4, y: -1e4 };
+	const agents: Agent[] = [];
+
+	function resize() {
+		dpr = Math.min(devicePixelRatio || 1, 2);
+		W = canvas.width = canvas.offsetWidth * dpr;
+		H = canvas.height = canvas.offsetHeight * dpr;
+	}
+
+	function spawn(x = Math.random() * W, y = Math.random() * H) {
+		const a = Math.random() * Math.PI * 2;
+		agents.push({ x, y, vx: Math.cos(a) * dpr, vy: Math.sin(a) * dpr });
+	}
+
+	// Colours come from CSS variables so the swarm follows the light/dark theme
+	function colours() {
+		const s = getComputedStyle(document.documentElement);
+		return { idle: s.getPropertyValue('--swarm').trim(), near: s.getPropertyValue('--accent').trim() };
+	}
+
+	function step(draw = true) {
+		const view = 70 * dpr, personal = 20 * dpr, fear = 110 * dpr, maxSpeed = 1.8 * dpr;
+		const c = colours();
+		ctx.clearRect(0, 0, W, H);
+
+		for (const b of agents) {
+			let ax = 0, ay = 0, cx = 0, cy = 0, sx = 0, sy = 0, n = 0;
+			for (const o of agents) {
+				if (o === b) continue;
+				const dx = o.x - b.x, dy = o.y - b.y;
+				const d = Math.hypot(dx, dy);
+				if (d < view) {
+					ax += o.vx; ay += o.vy; // alignment
+					cx += o.x; cy += o.y;   // cohesion
+					n++;
+					if (d < personal && d > 0) { sx -= dx / d; sy -= dy / d; } // separation
+				}
+			}
+			if (n) {
+				b.vx += (ax / n - b.vx) * 0.04 + (cx / n - b.x) * 0.0004;
+				b.vy += (ay / n - b.vy) * 0.04 + (cy / n - b.y) * 0.0004;
+			}
+			b.vx += sx * 0.06;
+			b.vy += sy * 0.06;
+
+			// Flee the mouse
+			const mx = b.x - mouse.x, my = b.y - mouse.y, md = Math.hypot(mx, my);
+			if (md < fear && md > 0) { b.vx += (mx / md) * 0.35; b.vy += (my / md) * 0.35; }
+
+			const s = Math.hypot(b.vx, b.vy);
+			if (s > maxSpeed) { b.vx *= maxSpeed / s; b.vy *= maxSpeed / s; }
+			if (s < 0.6 * dpr) { b.vx *= 1.05; b.vy *= 1.05; }
+
+			b.x = (b.x + b.vx + W) % W;
+			b.y = (b.y + b.vy + H) % H;
+
+			if (!draw) continue;
+			ctx.save();
+			ctx.translate(b.x, b.y);
+			ctx.rotate(Math.atan2(b.vy, b.vx));
+			ctx.fillStyle = md < fear ? c.near : c.idle;
+			ctx.beginPath();
+			ctx.moveTo(6 * dpr, 0);
+			ctx.lineTo(-4 * dpr, 3 * dpr);
+			ctx.lineTo(-4 * dpr, -3 * dpr);
+			ctx.fill();
+			ctx.restore();
+		}
+	}
+
+	resize();
+	const count = Math.round(Math.min(110, (canvas.offsetWidth * canvas.offsetHeight) / 9000));
+	for (let i = 0; i < count; i++) spawn();
+
+	addEventListener('resize', resize);
+	area.addEventListener('pointermove', (e) => {
+		const r = canvas.getBoundingClientRect();
+		mouse.x = (e.clientX - r.left) * dpr;
+		mouse.y = (e.clientY - r.top) * dpr;
+	});
+	area.addEventListener('pointerleave', () => { mouse.x = mouse.y = -1e4; });
+	area.addEventListener('click', (e) => {
+		if ((e.target as HTMLElement).closest('a, button')) return;
+		const r = canvas.getBoundingClientRect();
+		for (let i = 0; i < 3 && agents.length < 220; i++) spawn((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr);
+	});
+
+	if (reduceMotion) {
+		// No animation: let the swarm settle, then draw one still frame
+		for (let i = 0; i < 200; i++) step(false);
+		step();
+	} else {
+		// Only animate while the hero is on screen and the tab is visible
+		let visible = true;
+		new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas);
+		const loop = () => {
+			if (visible && !document.hidden) step();
+			requestAnimationFrame(loop);
+		};
+		step(); // draw a first frame even if the tab starts hidden
+		loop();
+	}
+	// Redraw with new colours when the theme changes
+	document.addEventListener('themechange', () => step());
+</script>

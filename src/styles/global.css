@@ -1,0 +1,92 @@
+/* Colour tokens. Dark is the default; light applies with the toggle or the OS setting. */
+:root {
+	--bg: #0e0e0d;
+	--surface: #161614;
+	--surface-2: #24241f;
+	--text: #edebe4;
+	--muted: #9c9a92;
+	--border: rgba(255, 255, 255, 0.08);
+	--border-strong: rgba(255, 255, 255, 0.18);
+	--accent: #5dcaa5;
+	--on-accent: #04342c;
+	--warm: #ef9f27;
+	--swarm: rgba(180, 178, 169, 0.45);
+
+	--sans: 'Geist', system-ui, -apple-system, sans-serif;
+	--mono: 'Geist Mono', ui-monospace, monospace;
+	--max: 1080px;
+	color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+	--bg: #f7f6f2;
+	--surface: #ffffff;
+	--surface-2: #ebe9e2;
+	--text: #1b1b19;
+	--muted: #5f5e5a;
+	--border: rgba(0, 0, 0, 0.08);
+	--border-strong: rgba(0, 0, 0, 0.2);
+	--accent: #0f6e56;
+	--on-accent: #e1f5ee;
+	--warm: #ba7517;
+	--swarm: rgba(68, 68, 65, 0.35);
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) {
+		--bg: #f7f6f2;
+		--surface: #ffffff;
+		--surface-2: #ebe9e2;
+		--text: #1b1b19;
+		--muted: #5f5e5a;
+		--border: rgba(0, 0, 0, 0.08);
+		--border-strong: rgba(0, 0, 0, 0.2);
+		--accent: #0f6e56;
+		--on-accent: #e1f5ee;
+		--warm: #ba7517;
+		--swarm: rgba(68, 68, 65, 0.35);
+		color-scheme: light;
+	}
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--sans);
+	font-size: 16px;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: inherit;
+}
+
+::selection {
+	background: var(--accent);
+	color: var(--on-accent);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
