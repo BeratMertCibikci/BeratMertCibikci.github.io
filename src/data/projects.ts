@@ -28,8 +28,8 @@ export const projects: Project[] = [
 			fr: 'Le jeu de société Mr. Jack Pocket, jouable sur ordinateur, avec une IA adverse à quatre niveaux de difficulté.',
 		},
 		role: {
-			en: 'Team project, I was the team lead. I wrote the entire AI and contributed to the game model and interface.',
-			fr: "Projet d'équipe, dont j'étais le chef. J'ai écrit toute l'IA et contribué au modèle du jeu et à l'interface.",
+			en: 'Team lead of a 6-person project. I wrote the entire AI and contributed to the game model and interface.',
+			fr: "Chef d'une équipe de 6. J'ai écrit toute l'IA et contribué au modèle du jeu et à l'interface.",
 		},
 		built: [
 			{
